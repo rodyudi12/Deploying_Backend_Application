@@ -3,8 +3,8 @@ require('dotenv').config();
 
 // Initialize database connection
 const db = new Sequelize({
-    dialect: process.env.DB_TYPE,
-    storage: `database/${process.env.DB_NAME}` || 'database/company_projects.db',
+    dialect: 'sqlite',
+    storage: `database/${process.env.DB_NAME}` || 'tasks.db',
     logging: false
 });
 
@@ -27,28 +27,6 @@ const User = db.define('User', {
     password: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    // TODO: Add role field (employee, manager, admin)
-});
-
-// Project Model
-const Project = db.define('Project', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    description: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
-    status: {
-        type: DataTypes.STRING,
-        defaultValue: 'active'
     }
 });
 
@@ -67,9 +45,9 @@ const Task = db.define('Task', {
         type: DataTypes.TEXT,
         allowNull: true
     },
-    status: {
-        type: DataTypes.STRING,
-        defaultValue: 'pending'
+    completed: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     },
     priority: {
         type: DataTypes.STRING,
@@ -78,14 +56,8 @@ const Task = db.define('Task', {
 });
 
 // Define Relationships
-User.hasMany(Project, { foreignKey: 'managerId', as: 'managedProjects' });
-Project.belongsTo(User, { foreignKey: 'managerId', as: 'manager' });
-
-Project.hasMany(Task, { foreignKey: 'projectId' });
-Task.belongsTo(Project, { foreignKey: 'projectId' });
-
-User.hasMany(Task, { foreignKey: 'assignedUserId', as: 'assignedTasks' });
-Task.belongsTo(User, { foreignKey: 'assignedUserId', as: 'assignedUser' });
+User.hasMany(Task, { foreignKey: 'userId' });
+Task.belongsTo(User, { foreignKey: 'userId' });
 
 // Initialize database
 async function initializeDatabase() {
@@ -95,6 +67,7 @@ async function initializeDatabase() {
         
         await db.sync({ force: false });
         console.log('Database synchronized successfully.');
+        
     } catch (error) {
         console.error('Unable to connect to database:', error);
     }
@@ -105,6 +78,5 @@ initializeDatabase();
 module.exports = {
     db,
     User,
-    Project,
     Task
 };

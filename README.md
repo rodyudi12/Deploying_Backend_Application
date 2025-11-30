@@ -1,63 +1,110 @@
-# Assignment #9: Company Project Management API
+# Task Management API
 
-A RESTful API for managing company projects and tasks with role-based access control.
+A REST API for managing tasks with user authentication, built with Node.js, Express, and SQLite.
 
-## Setup Instructions
+## Features
 
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Set up environment variables in `.env`
-4. Setup the database: `npm run setup`
-5. Seed the database: `npm run seed`
-6. Start the server: `npm start`
-
-## Current Status
-
-This API is **partially implemented** and needs JWT authentication and role-based authorization added.
-
-### What's Working:
-- User registration and login (session-based)
-- Full CRUD operations for projects and tasks
-- Database relationships and seeding
-- Basic authentication middleware
-
-### What You Need to Implement:
-- [ ] Add role field to User model
-- [ ] Replace session authentication with JWT tokens
-- [ ] Create role-based middleware functions
-- [ ] Protect endpoints with appropriate role restrictions
-- [ ] Test authorization flows
+- User registration and authentication
+- JWT-based authentication
+- CRUD operations for tasks
+- User-specific task management
+- SQLite database with Sequelize ORM
 
 ## API Endpoints
 
 ### Authentication
-- `POST /api/register` - Register new user
-- `POST /api/login` - User login
-- `POST /api/logout` - User logout
+- `POST /api/register` - Register a new user
+- `POST /api/login` - Login user
 
-### Users
-- `GET /api/users/profile` - Get current user profile
-- `GET /api/users` - Get all users
-
-### Projects
-- `GET /api/projects` - List projects
-- `GET /api/projects/:id` - Get single project
-- `POST /api/projects` - Create project
-- `PUT /api/projects/:id` - Update project
-- `DELETE /api/projects/:id` - Delete project
-
-### Tasks
-- `GET /api/projects/:id/tasks` - List tasks for project
-- `POST /api/projects/:id/tasks` - Create task
+### Tasks (Protected Routes)
+- `GET /api/tasks` - Get all tasks for authenticated user
+- `GET /api/tasks/:id` - Get single task
+- `POST /api/tasks` - Create new task
 - `PUT /api/tasks/:id` - Update task
 - `DELETE /api/tasks/:id` - Delete task
 
-## Sample Users
-- `john@company.com` (Employee) - password: password123
-- `sarah@company.com` (Manager) - password: password123
-- `mike@company.com` (Admin) - password: password123
+### Utility
+- `GET /health` - Health check endpoint
+- `GET /` - API information
 
-## Role Permissions (To Be Implemented)
-- **Employee**: View projects/tasks, update task status
-- **Manager**: Create/edit projects, assign tasks, view team progress
-- **Admin**: Full system access, manage users, delete projects
+## Local Development
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Seed the database (optional):
+    ```bash
+    npm run seed
+    ```
+3. Start the server:
+    ```bash
+    npm start
+    ``
+4. The API will be available at `http://localhost:3000`
+
+### Sample Users
+If you run the seed script, you'll have these test users available:
+- **john@example.com** / password123 (3 tasks)
+- **jane@example.com** / password123 (3 tasks)
+- **mike@example.com** / password123 (4 tasks)
+
+You can use these accounts to test the API without having to register new users.
+
+### Testing
+Use the following sample requests to test the API:
+
+**Register a user:**
+
+```bash
+POST /api/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+**Login:**
+
+```bash
+POST /api/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+**Create a task (requires authentication):**
+```bash
+POST /api/tasks
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN
+
+{
+  "title": "Complete project",
+  "description": "Finish the task management API",
+  "priority": "high"
+}
+```
+
+### Database
+This API uses SQLite for simplicity. The database file (tasks.db) will be created automatically when you start the server.
+**Note for deployment**: SQLite databases on platforms like Render will reset when containers restart. For persistent storage in production, consider upgrading to PostgreSQL.
+
+### Environment Variables
+- `NODE_ENV` - Environment (development/production)
+- `PORT` - Server port (default: 3000)
+- `JWT_SECRET` - Secret key for JWT tokens
+- `JWT_EXPIRES_IN` - JWT token expiration time
+- `DB_NAME` - Database file name
+
+### Deployment
+This API is ready to deploy to cloud platforms like Render. Make sure to:
+1. Set appropriate environment variables
+2. Use a secure JWT secret in production
+3. Consider database limitations with SQLite

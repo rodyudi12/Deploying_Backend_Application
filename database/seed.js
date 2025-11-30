@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { db, User, Project, Task } = require('./setup');
+const { db, User, Task } = require('./setup');
 
 async function seedDatabase() {
     try {
@@ -12,87 +12,107 @@ async function seedDatabase() {
         
         const users = await User.bulkCreate([
             {
-                name: 'John Employee',
-                email: 'john@company.com',
+                name: 'John Doe',
+                email: 'john@example.com',
                 password: hashedPassword
-                // TODO: Add role: 'employee'
-
-
             },
             {
-                name: 'Sarah Manager',
-                email: 'sarah@company.com',
+                name: 'Jane Smith',
+                email: 'jane@example.com',
                 password: hashedPassword
-                // TODO: Add role: 'manager'
-
-
             },
             {
-                name: 'Mike Admin',
-                email: 'mike@company.com',
+                name: 'Mike Johnson',
+                email: 'mike@example.com',
                 password: hashedPassword
-                // TODO: Add role: 'admin'
-
-                
-            }
-        ]);
-
-        // Create sample projects
-        const projects = await Project.bulkCreate([
-            {
-                name: 'Website Redesign',
-                description: 'Complete overhaul of company website',
-                managerId: users[1].id, // Sarah Manager
-                status: 'active'
-            },
-            {
-                name: 'Mobile App Development',
-                description: 'New mobile app for customers',
-                managerId: users[1].id, // Sarah Manager
-                status: 'active'
-            },
-            {
-                name: 'Database Migration',
-                description: 'Migrate legacy database to new system',
-                managerId: users[2].id, // Mike Admin
-                status: 'planning'
             }
         ]);
 
         // Create sample tasks
         await Task.bulkCreate([
+            // John's tasks
             {
-                title: 'Design homepage mockup',
-                description: 'Create wireframes and mockups for new homepage',
-                projectId: projects[0].id,
-                assignedUserId: users[0].id, // John Employee
-                status: 'in-progress',
-                priority: 'high'
+                title: 'Complete project documentation',
+                description: 'Write comprehensive documentation for the API project',
+                priority: 'high',
+                completed: false,
+                userId: users[0].id
             },
             {
-                title: 'Set up development environment',
-                description: 'Configure local development setup',
-                projectId: projects[1].id,
-                assignedUserId: users[0].id, // John Employee
-                status: 'completed',
-                priority: 'medium'
+                title: 'Review code changes',
+                description: 'Review pull requests from team members',
+                priority: 'medium',
+                completed: true,
+                userId: users[0].id
             },
             {
-                title: 'Review database schema',
-                description: 'Analyze current database structure',
-                projectId: projects[2].id,
-                assignedUserId: users[1].id, // Sarah Manager
-                status: 'pending',
-                priority: 'high'
+                title: 'Update dependencies',
+                description: 'Update all npm packages to latest versions',
+                priority: 'low',
+                completed: false,
+                userId: users[0].id
+            },
+            
+            // Jane's tasks
+            {
+                title: 'Design new user interface',
+                description: 'Create mockups for the new dashboard design',
+                priority: 'high',
+                completed: false,
+                userId: users[1].id
+            },
+            {
+                title: 'Test API endpoints',
+                description: 'Perform comprehensive testing of all API endpoints',
+                priority: 'medium',
+                completed: false,
+                userId: users[1].id
+            },
+            {
+                title: 'Setup CI/CD pipeline',
+                description: 'Configure automated testing and deployment',
+                priority: 'high',
+                completed: true,
+                userId: users[1].id
+            },
+            
+            // Mike's tasks
+            {
+                title: 'Database optimization',
+                description: 'Optimize database queries for better performance',
+                priority: 'medium',
+                completed: false,
+                userId: users[2].id
+            },
+            {
+                title: 'Security audit',
+                description: 'Perform security audit of the application',
+                priority: 'high',
+                completed: false,
+                userId: users[2].id
+            },
+            {
+                title: 'Write unit tests',
+                description: 'Add unit tests for all API endpoints',
+                priority: 'medium',
+                completed: true,
+                userId: users[2].id
+            },
+            {
+                title: 'Deploy to production',
+                description: 'Deploy the application to production environment',
+                priority: 'high',
+                completed: false,
+                userId: users[2].id
             }
         ]);
 
         console.log('Database seeded successfully!');
         console.log('Sample users created:');
-        console.log('- john@company.com (Employee)');
-        console.log('- sarah@company.com (Manager)');
-        console.log('- mike@company.com (Admin)');
-        console.log('All passwords: password123');
+        console.log('- john@example.com / password123');
+        console.log('- jane@example.com / password123');
+        console.log('- mike@example.com / password123');
+        console.log('Total tasks created:', await Task.count());
         
     } catch (error) {
         console.error('Error seeding database:', error);
