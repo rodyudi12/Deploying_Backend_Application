@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
+const cors = require('cors');
 const { db, User, Project, Task } = require('./database/setup');
 require('dotenv').config();
 
@@ -9,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
+app.use(cors());
 
 // Session middleware (TODO: Replace with JWT)
 app.use(session({
