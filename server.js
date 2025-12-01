@@ -325,7 +325,15 @@ app.delete('/api/tasks/:id', requireAuth, async (req, res) => {
         res.status(500).json({ error: 'Failed to delete task' });
     }
 });
-
+// Get information of API
+app.get("/api/health", (req, res) => {
+    res.json({
+        status: "API is up and running",
+        environment: process.env.NODE_ENV || "production",
+        version: "1.0.0",
+        timestamp: new Date().toISOString()
+    });
+});
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error('Unhandled error:', err);
